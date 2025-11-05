@@ -1,0 +1,355 @@
+import React, { useMemo, useState } from "react";
+
+// Sample one‑page launch site for MYNEK — Drop 1: CHAOS DIVISION
+// Dark luxury aesthetic • Product grid • Size chart modal • Cart drawer • About • IG gallery
+// Tailwind only (no external libs). Ready to hand to a dev or export as HTML.
+
+const PRODUCTS = [
+  {
+    id: "chaos-barcode",
+    name: "Chaos Barcode Tee",
+    price: 34.99,
+    description: "Oversize 240GSM. Mixed print: DTF + Puff hits. Front chest micro, back full.",
+    colors: [
+      { key: "black", label: "Black", hex: "#0a0a0a" },
+      { key: "offwhite", label: "Off‑White", hex: "#f2f2ec" },
+      { key: "olive", label: "Olive", hex: "#5b6a4d" },
+    ],
+    images: [
+      "https://placehold.co/1200x1500/0a0a0a/f6f6f6?text=Chaos+Barcode+—+Black",
+      "https://placehold.co/1200x1500/f2f2ec/111111?text=Chaos+Barcode+—+Offwhite",
+      "https://placehold.co/1200x1500/5b6a4d/f6f6f6?text=Chaos+Barcode+—+Olive",
+    ],
+    tag: "DTF + Puff",
+  },
+  {
+    id: "mecha-mask",
+    name: "Mecha Mask Tee",
+    price: 36.99,
+    description: "Oversize 240GSM. HD screen + puff outline. Iconic mask back print.",
+    colors: [
+      { key: "black", label: "Black", hex: "#0a0a0a" },
+      { key: "offwhite", label: "Off‑White", hex: "#f2f2ec" },
+      { key: "olive", label: "Olive", hex: "#5b6a4d" },
+    ],
+    images: [
+      "https://placehold.co/1200x1500/0a0a0a/f6f6f6?text=Mecha+Mask+—+Black",
+      "https://placehold.co/1200x1500/f2f2ec/111111?text=Mecha+Mask+—+Offwhite",
+      "https://placehold.co/1200x1500/5b6a4d/f6f6f6?text=Mecha+Mask+—+Olive",
+    ],
+    tag: "HD + Puff",
+  },
+  {
+    id: "signature-script",
+    name: "MYNEK Script Tee",
+    price: 32.99,
+    description: "Oversize 240GSM. Front script embroidery + back arc print.",
+    colors: [
+      { key: "black", label: "Black", hex: "#0a0a0a" },
+      { key: "offwhite", label: "Off‑White", hex: "#f2f2ec" },
+      { key: "olive", label: "Olive", hex: "#5b6a4d" },
+    ],
+    images: [
+      "https://placehold.co/1200x1500/0a0a0a/f6f6f6?text=Script+—+Black",
+      "https://placehold.co/1200x1500/f2f2ec/111111?text=Script+—+Offwhite",
+      "https://placehold.co/1200x1500/5b6a4d/f6f6f6?text=Script+—+Olive",
+    ],
+    tag: "Embroidery",
+  },
+];
+
+const SIZES = ["S", "M", "L", "XL", "XXL"];
+
+export default function App() {
+  const [active, setActive] = useState(PRODUCTS[0]);
+  const [color, setColor] = useState(active.colors[0]);
+  const [size, setSize] = useState("L");
+  const [cart, setCart] = useState([]);
+  const [openSizeChart, setOpenSizeChart] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
+
+  const heroImage = useMemo(() => {
+    const idx = active.colors.findIndex((c) => c.key === color.key);
+    return active.images[idx] || active.images[0];
+  }, [active, color]);
+
+  const addToCart = () => {
+    setCart((prev) => [...prev, { product: active, color, size, qty: 1 }]);
+    setOpenCart(true);
+  };
+
+  return (
+    <main className="min-h-screen bg-black text-zinc-100">
+      {/* Top bar */}
+      <header className="sticky top-0 z-50 backdrop-blur bg-black/60 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-white/10 grid place-items-center font-bold">M</div>
+            <span className="tracking-[0.25em] text-xs text-zinc-400">URBAN STREETWEAR</span>
+          </div>
+          <nav className="hidden md:flex gap-6 text-sm text-zinc-300">
+            <a className="hover:text-white" href="#drop">Drop 1</a>
+            <a className="hover:text-white" href="#about">About</a>
+            <a className="hover:text-white" href="#gallery">Gallery</a>
+            <button onClick={() => setOpenCart(true)} className="hover:text-white">Cart ({cart.length})</button>
+          </nav>
+          <button onClick={() => setOpenCart(true)} className="md:hidden text-sm">Cart ({cart.length})</button>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#1f1f1f,transparent_60%)]" />
+        <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+          <div className="order-2 md:order-1">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
+              CHAOS DIVISION
+            </h1>
+            <p className="mt-4 text-zinc-300 max-w-xl">
+              Drop 1 lands in three cores — <span className="text-white">Black</span>, <span className="text-white">Off‑White</span>, and <span className="text-white">Olive</span> — built on <span className="text-white">240GSM</span> premium oversize blanks with mixed print tech: DTF, Puff & HD Screen. Limited run.
+            </p>
+            <div className="mt-6 flex gap-3">
+              <a href="#drop" className="px-5 py-3 rounded-2xl bg-white text-black font-semibold hover:bg-zinc-200 transition">Shop the Drop</a>
+              <button onClick={() => setOpenSizeChart(true)} className="px-5 py-3 rounded-2xl border border-white/20 hover:border-white/40">Size Chart</button>
+            </div>
+            <div className="mt-6 text-xs text-zinc-400">Ships worldwide • Secure checkout • Limited quantities</div>
+          </div>
+          <div className="order-1 md:order-2">
+            <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl border border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.06)]">
+              <img src={heroImage} alt={active.name} className="h-full w-full object-cover" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Product Switcher */}
+      <section id="drop" className="max-w-7xl mx-auto px-4 pb-16">
+        <div className="flex items-end justify-between mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold">The Collection</h2>
+          <button onClick={() => setOpenSizeChart(true)} className="text-sm text-zinc-300 hover:text-white">View Size Guide</button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-3 mb-8">
+          {PRODUCTS.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => { setActive(p); setColor(p.colors[0]); }}
+              className={`px-4 py-2 rounded-full border transition ${active.id === p.id ? "border-white bg-white/10" : "border-white/10 hover:border-white/30"}`}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Product panel */}
+        <div className="grid lg:grid-cols-2 gap-10">
+          <div className="space-y-4">
+            <div className="relative rounded-3xl overflow-hidden border border-white/10">
+              <img src={heroImage} alt={active.name} className="w-full h-full object-cover" />
+              <div className="absolute left-4 top-4 px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20">{active.tag}</div>
+            </div>
+            {/* Thumbs */}
+            <div className="grid grid-cols-3 gap-3">
+              {active.images.map((src, i) => (
+                <button key={i} onClick={() => setColor(active.colors[i])} className={`rounded-2xl overflow-hidden border ${color.key === active.colors[i].key ? "border-white" : "border-white/10 hover:border-white/30"}`}>
+                  <img src={src} alt="thumb" className="w-full aspect-[4/5] object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-between">
+            <div>
+              <h3 className="text-3xl font-semibold">{active.name}</h3>
+              <div className="mt-2 text-zinc-300">{active.description}</div>
+              <div className="mt-4 text-xl">£{active.price.toFixed(2)}</div>
+
+              {/* Colors */}
+              <div className="mt-6">
+                <div className="text-sm text-zinc-300 mb-2">Color</div>
+                <div className="flex gap-3">
+                  {active.colors.map((c) => (
+                    <button key={c.key} onClick={() => setColor(c)} title={c.label} className={`h-9 w-9 rounded-full ring-2 ${color.key === c.key ? "ring-white" : "ring-transparent"}`} style={{ backgroundColor: c.hex }} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Sizes */}
+              <div className="mt-6">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-zinc-300 mb-2">Size</div>
+                  <button onClick={() => setOpenSizeChart(true)} className="text-xs text-zinc-400 hover:text-white">Size help</button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {SIZES.map((s) => (
+                    <button key={s} onClick={() => setSize(s)} className={`px-4 py-2 rounded-xl border text-sm transition ${s === size ? "border-white bg-white/10" : "border-white/10 hover:border-white/30"}`}>{s}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 flex gap-3">
+                <button onClick={addToCart} className="flex-1 px-5 py-3 rounded-2xl bg-white text-black font-semibold hover:bg-zinc-200 transition">Add to Cart</button>
+                <a href="#checkout" className="px-5 py-3 rounded-2xl border border-white/20 hover:border-white/40">Buy Now</a>
+              </div>
+
+              <ul className="mt-6 text-sm text-zinc-400 space-y-1">
+                <li>• 240GSM premium cotton, oversize fit</li>
+                <li>• Mixed print methods: DTF / Puff / HD Screen</li>
+                <li>• Woven neck + side hem tag</li>
+                <li>• Returns accepted within 14 days</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="border-y border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-16 grid md:grid-cols-3 gap-10">
+          <div className="md:col-span-2">
+            <h3 className="text-2xl font-semibold">Built from the streets. Worn by visionaries.</h3>
+            <p className="mt-4 text-zinc-300 max-w-2xl">
+              MYNEK fuses anime grit with luxury finish. Every drop is engineered for texture, depth and longevity — from heavy 240GSM blanks to tactile print techniques. CHAOS DIVISION is our opening statement: disciplined craft, disruptive energy.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            <Stat k="240" label="GSM Weight" />
+            <Stat k="3" label="Core Colors" />
+            <Stat k="3" label="Designs in Drop" />
+            <Stat k="100" suffix="%" label="Premium Cotton" />
+          </div>
+        </div>
+      </section>
+
+      {/* IG Gallery */}
+      <section id="gallery" className="max-w-7xl mx-auto px-4 py-16">
+        <div className="flex items-end justify-between mb-6">
+          <h3 className="text-2xl font-semibold">From the feed</h3>
+          <a href="#" className="text-sm text-zinc-300 hover:text-white">Follow @mynek</a>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-white/10">
+              <img src={`https://placehold.co/800x800/141414/ededed?text=Reel+${i+1}`} alt="reel" className="h-full w-full object-cover hover:scale-105 transition" />
+              <div className="absolute inset-0 grid place-items-center bg-black/0 hover:bg-black/30 transition">
+                <div className="h-10 w-10 rounded-full bg-white/20 grid place-items-center">▶</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-10 grid md:grid-cols-3 gap-8 text-sm text-zinc-400">
+          <div>
+            <div className="text-white font-semibold">MYNEK</div>
+            <p className="mt-2 max-w-xs">Premium urban streetwear engineered in the UK. Tokyo‑inspired, globally worn.</p>
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <div className="text-zinc-200">Shop</div>
+              <ul className="mt-2 space-y-1">
+                <li><a href="#drop" className="hover:text-white">Drop 1</a></li>
+                <li><a href="#" className="hover:text-white">Size Guide</a></li>
+                <li><a href="#" className="hover:text-white">Shipping & Returns</a></li>
+              </ul>
+            </div>
+            <div>
+              <div className="text-zinc-200">Connect</div>
+              <ul className="mt-2 space-y-1">
+                <li><a href="#" className="hover:text-white">Instagram</a></li>
+                <li><a href="#" className="hover:text-white">TikTok</a></li>
+                <li><a href="#" className="hover:text-white">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="md:text-right">© {new Date().getFullYear()} MYNEK. All rights reserved.</div>
+        </div>
+      </footer>
+
+      {/* Size Chart Modal */}
+      {openSizeChart && (
+        <div className="fixed inset-0 z-[60] bg-black/70 grid place-items-center p-4" onClick={() => setOpenSizeChart(false)}>
+          <div className="bg-zinc-900 rounded-2xl border border-white/10 max-w-2xl w-full p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xl font-semibold">Size Guide — Oversize 240GSM</h4>
+              <button onClick={() => setOpenSizeChart(false)} className="text-zinc-400 hover:text-white">✕</button>
+            </div>
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="text-zinc-300">
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-2">Size</th>
+                    <th className="text-left py-2">Chest (in)</th>
+                    <th className="text-left py-2">Length (in)</th>
+                    <th className="text-left py-2">Shoulder (in)</th>
+                  </tr>
+                </thead>
+                <tbody className="text-zinc-400">
+                  {[
+                    { s: "S", c: 40, l: 27, sh: 18 },
+                    { s: "M", c: 42, l: 28, sh: 18.5 },
+                    { s: "L", c: 44, l: 29, sh: 19 },
+                    { s: "XL", c: 46, l: 30, sh: 19.5 },
+                    { s: "XXL", c: 48, l: 31, sh: 20 },
+                  ].map((r) => (
+                    <tr key={r.s} className="border-b border-white/5">
+                      <td className="py-2">{r.s}</td>
+                      <td className="py-2">{r.c}"</td>
+                      <td className="py-2">{r.l}"</td>
+                      <td className="py-2">{r.sh}"</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 text-xs text-zinc-500">Note: Oversize fit by design. If you are between sizes, size down for a closer fit.</div>
+          </div>
+        </div>
+      )}
+
+      {/* Cart Drawer */}
+      <aside className={`fixed top-0 right-0 h-full w-full sm:w-[420px] z-[70] bg-zinc-950 border-l border-white/10 transform transition-transform ${openCart ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
+          <div className="font-semibold">Your Cart</div>
+          <button onClick={() => setOpenCart(false)} className="text-zinc-400 hover:text-white">✕</button>
+        </div>
+        <div className="p-4 space-y-4 overflow-y-auto h-[calc(100%-160px)]">
+          {cart.length === 0 && <div className="text-zinc-400 text-sm">Your cart is empty.</div>}
+          {cart.map((line, i) => (
+            <div key={i} className="flex gap-3 border border-white/10 rounded-xl p-3">
+              <div className="h-20 w-16 rounded-lg overflow-hidden border border-white/10">
+                <img src={line.product.images[line.product.colors.findIndex(c=>c.key===line.color.key)]} alt="thumb" className="h-full w-full object-cover" />
+              </div>
+              <div className="flex-1">
+                <div className="font-medium">{line.product.name}</div>
+                <div className="text-xs text-zinc-400">{line.color.label} • {line.size}</div>
+                <div className="mt-1 text-sm">£{line.product.price.toFixed(2)}</div>
+              </div>
+              <button onClick={() => setCart(cart.filter((_, idx) => idx !== i))} className="self-start text-zinc-400 hover:text-white">Remove</button>
+            </div>
+          ))}
+        </div>
+        <div className="p-4 border-t border-white/10">
+          <div className="flex items-center justify-between text-sm text-zinc-300">
+            <span>Subtotal</span>
+            <span>£{cart.reduce((a, l) => a + l.product.price, 0).toFixed(2)}</span>
+          </div>
+          <button className="mt-3 w-full px-5 py-3 rounded-2xl bg-white text-black font-semibold hover:bg-zinc-200 transition" onClick={() => alert("This is a mock checkout.")}>Proceed to Checkout</button>
+          <div className="mt-2 text-xs text-zinc-500">Secure checkout • Taxes calculated at checkout</div>
+        </div>
+      </aside>
+    </main>
+  );
+}
+
+function Stat({ k, suffix = "", label }) {
+  return (
+    <div className="p-4 rounded-2xl border border-white/10 bg-white/5">
+      <div className="text-3xl font-semibold">{k}{suffix}</div>
+      <div className="text-xs text-zinc-400 mt-1">{label}</div>
+    </div>
+  );
+}
